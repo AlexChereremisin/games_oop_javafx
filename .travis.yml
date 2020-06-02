@@ -6,10 +6,10 @@ jdk:
 # используем режим обычного пользователя для сборки проекта.
 sudo: false
 
-# Отправлять уведомление на почтуyouremail@smtp.ru(Изменить на свою) если сборка упала
+# Отправлять уведомление на почту 71m25@mail.ru если сборка упала
 notifications:
   email:
     recipients:
-      -parsentev@yandex.ru
+      -71m25@mail.ru
     on_success: never # default: change
     on_failure: always # default: always
