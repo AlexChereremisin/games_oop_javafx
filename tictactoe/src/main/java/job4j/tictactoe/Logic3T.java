@@ -1,9 +1,7 @@
 package job4j.tictactoe;
 
 import java.util.Arrays;
-import java.util.Set;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public class Logic3T {
     private final Figure3T[][] table;
@@ -27,32 +25,31 @@ public class Logic3T {
     }
 
     public boolean isWinnerX() {
-        return this.fillBy(Figure3T::hasMarkX, 0, 0, 1, 0) ||
-                this.fillBy(Figure3T::hasMarkX, 0, 1, 1, 0) ||
-                this.fillBy(Figure3T::hasMarkX, 0, 2, 1, 0) ||
-                this.fillBy(Figure3T::hasMarkX, 0, 0, 0, 1) ||
-                this.fillBy(Figure3T::hasMarkX, 1, 0, 0, 1) ||
-                this.fillBy(Figure3T::hasMarkX, 2, 0, 0, 1) ||
-                this.fillBy(Figure3T::hasMarkX, 0,0, 1, 1) ||
-                this.fillBy(Figure3T::hasMarkX, this.table.length - 1 , 0, -1, 1);
+        return this.checkAllCells(Figure3T::hasMarkX);
     }
 
     public boolean isWinnerO() {
-        return this.fillBy(Figure3T::hasMarkO, 0, 0, 1, 0) ||
-                this.fillBy(Figure3T::hasMarkO, 0, 1, 1, 0) ||
-                this.fillBy(Figure3T::hasMarkO, 0, 2, 1, 0) ||
-                this.fillBy(Figure3T::hasMarkO, 0, 0, 0, 1) ||
-                this.fillBy(Figure3T::hasMarkO, 1, 0, 0, 1) ||
-                this.fillBy(Figure3T::hasMarkO, 2, 0, 0, 1) ||
-                this.fillBy(Figure3T::hasMarkO, 0,0, 1, 1) ||
-                this.fillBy(Figure3T::hasMarkO, this.table.length - 1, 0, -1, 1);
+        return this.checkAllCells(Figure3T::hasMarkO);
+    }
+
+    private boolean checkAllCells(Predicate<Figure3T> predicate) {
+        boolean rsl = this.fillBy(predicate, 0,0, 1, 1) ||
+                this.fillBy(predicate, this.table.length - 1, 0, -1, 1);
+        if (!rsl) {
+            for (int i = 0; i < this.table.length; i++) {
+                rsl = this.fillBy(predicate, 0, i, 1, 0) ||
+                        this.fillBy(predicate, i, 0, 0, 1);
+                if(rsl) {
+                    break;
+                }
+            }
+        }
+        return rsl;
     }
 
     public boolean hasGap() {
-        Set<Figure3T> rsl = Arrays.stream(this.table)
+        return Arrays.stream(this.table)
                 .flatMap(Arrays::stream)
-                .filter(figure3T -> figure3T.hasMarkX() == figure3T.hasMarkO())
-                .collect(Collectors.toSet());
-        return !rsl.isEmpty();
+                .anyMatch(f -> f.hasMarkX() == f.hasMarkO());
     }
 }
